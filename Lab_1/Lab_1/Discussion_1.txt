@@ -1,0 +1,22 @@
+Question: 
+In the early years of the RISC versus CISC dispute, the total number of different instructions and their variations in the ISA was a common indication of the "simplicity" of an ISA (lesser the number, greater the simplicity). Modern RISC instruction sets contain almost as many instructions as old CISC instruction sets. Discuss whether modern "RISC" processors are no longer RISC (as envisioned in the 80's). If they are still RISC, then what features in the instruction set best dene the simplicity of an ISA? (e.g. memory access instructions, fixed and simple instruction encoding, register-oriented instructions, simple data types, etc.?)
+ 
+Solution:
+Despite the significant evolvement of modern RISC processors, they still maintain their core principles.
+The main focus of the RISC was more of focused on a specific design principles, which include the following: 
+1. Load-Store Architecture. 
+The modern RISC processors maintain the load-store model where memory access is restricted to dedicated load/store instructions. This separates memory access from computation.
+2. Fixed Instruction Length. 
+Most of the RISC processors still use fixed-length instructions which make instruction fetch and decode much simpler and much more efficient. This is unlike the CISC's variable-length instructions that complicate pipelining.
+3. Register-Based Operations. 
+RISC processors continue emphasizing register-to-register oprations with large register files. What this does is minimizing memory access during computation.
+4. Simplified Addressing Modes. 
+RISC processors still offer far fewer and simpler addressing modes than the traditional CISC designs.
+
+What has changed is the expansion of instuction sets through features such as: 
+1. SIMD/Vector Extensions.
+Modern RISC processors have added significant SIMD (Single Instruction Multi Data) capabilities, which increase instruction count.
+2. Specialized Instructions: 
+Additions for machine learning, cryptography among others have been added.
+
+The simplicity of an Instruction Set Architecture is best defined by its memory access model, address mode simplicity, among others. The modern RISC processors have observed and maintained these principles.

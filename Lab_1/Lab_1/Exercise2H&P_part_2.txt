@@ -1,0 +1,10 @@
+Situation where the optimization can't be applied: 
+
+LOAD Rx, 0(Rb) -> Load value from memory addressed by Rb into Rx
+Add Ry, Ry, Rx -> Add Rx to Ry and store in Ry
+STORE Rx, 0(Rc) -> Store the value in Rx to memory addressed by Rc
+
+Reason:
+The loaded value in Rx is needed only for the ADD operation but also for the subsequent STORE operation.
+If we replaced the first two instructions with ADD Ry, 0(Rb), we would lose the value that needs to be store in the third instruction.
+
