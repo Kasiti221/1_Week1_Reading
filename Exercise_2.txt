@@ -1,0 +1,20 @@
+Assuming that every other element of x has the value 0, starting with the first one, show the outcomes of predictions when a 2-bit saturating counter is used to predict the inner branch BNEZ F1, else. Assume that the initial value of the counter is 00.
+Solution
+a.	2-bit saturating counter branch predictor
+current counter value	prediction	actual outcome	new counter value
+00	NT	NT	00
+00	NT	T	01
+01	NT	NT	00
+01	NT	T	10
+10	T	NT	01
+10	T	T	11
+11	T	NT	10
+11	T	T	11
+b.	2-bit counter prediction rate
+Iteration	current counter value	prediction	actual outcome	new counter value
+1	00	NT	NT	00 (hit)
+2	00	NT	T	01 (miss)
+3	01	NT	NT	00 (hit)
+4	00	NT	T	01 (miss)
+...	...	...	...	...
+
