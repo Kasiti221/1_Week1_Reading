@@ -1,0 +1,22 @@
+Problem
+Assume we have a computer where the CPI is 1.0 when all memory accesses (including data and instruction accesses) hit in the cache. The cache is a unified (data + instruction) cache of size 256 KB, 4-way set associative, with a block size of 64 bytes. The data accesses (loads and stores) constitute 50% of the instructions. The unified cache has a miss penalty of 25 clock cycles and a miss rate of 2%. Assume 32 bit instruction and data addresses.
+a.	What is the tag size for the cache?
+b.	How much faster would the computer be if all memory accesses were cache hits?
+
+
+
+Solution
+Number of bits used for block offset = log 64 = 6.
+Number of sets in the cache = 256K/(64 * 4) = 1K
+Number of bits for index = log 1K = 10
+Number of bits for tag = 32 - (10 + 6) = 16
+Now,
+CPI = CPIexecution + StallCyclesPerInstruction
+For computer that always hits, CPI = 1
+For computer with non-zero miss rate, let us compute StallCyclesPerInstruction
+StallCyclesPerInstruction = (Memory accesses per instr) * miss rate * miss penalty
+Memory accesses per instruction = 1 + 0.5 (1 instruction access + 0.5 data access)
+StallCyclesPerInstruction = 1.5 * 0.02 * 25 = 0.75
+Therefore, CPI = 1.75
+The computer with no cache misses is 1.75 times faster.
+
