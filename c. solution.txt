@@ -1,0 +1,51 @@
+Understanding the problem first. 
+
+loop: LD R1,0(R2)      # Load value from the memory address in R2 into R1
+      DADDI R1,R1,1    # Increment the value in R1 by 1
+      SD 0(R2),R1      # Store the updated valaue from R1 back to address in R2
+      DADDI R2,R2,4    # Increment R2 by 4 (moving to next memory word)
+      DSUB R4,R3,R2    # R4 = R3-R2 (checking if we're done)
+      BNEZ R4,loop     # Branch to loop if R4 ≠ 0.
+
+So, let's start with the assumptions. 
+   1. It's a 5-stage pipeline with normal forwarding.
+   2. Single-cycle delayed branch. 
+ => We can reorder instructions and modify operands.
+
+Optimizing instruction sequence.
+  => The delayed branch slot provides the optimization opportunity. 
+  The instruction after BNEZ will always execute. 
+  The best candidate is the DADDI R2, R2, 4 instruction since:  
+     - It doesn't depend on the branch outcome. 
+     - It can be moved without affectin gprogram correctness. 
+     - It's independent of other instructions in the loop.
+
+Reordered code: 
+  loop: LD R1,0(R2)     # Load value at address in R2 into R1
+      DADDI R1,R1,1     # Increment the value R1 by 1
+      SD 0(R2),R1       # Store the value R1 back to address in R2
+      DSUB R4,R3,R2     # R4 = R3-R2 (check if we're done)
+      BNEZ R4,loop      # Branch to loop if R4 ≠ 0
+      DADDI R2,R2,4     # Increment the value R2 by 4 (in delay slot)
+
+Let's create a pipeline diagram analysis.
+
+  Cycle 1   2   3   4   5   6   7   8   9   10  11  12
+  LD    IF  ID  EX  ME  WB
+  DADDI     IF  ID  --  EX  ME  WB  # 1 stall for load-use hazard
+  SD            IF  ID  EX  ME  WB
+  DSUB              IF  ID  EX  ME  WB
+  BNEZ                  IF  ED  EX  ME  WB
+  DADDI                     IF  ID  EX  ME  WB  # Delay slot
+  LD                            IF  ID  EX  ME  WB  # Next iteration
+
+Cycles per iteration. 
+    First LD starts at cycle 1.
+    Next LD starts at cycle 7
+    Each iteration takes 6 cycles
+
+Calculating the total execution time. 
+  We process 396/4 => 99 elements. 
+  99 iterations × 6 cycles = 594 cycles
+  For the final iteration, we need to complete all 6 instructions: 6 cycles
+  Total Cycles: 594 + 6 = 600 cycles

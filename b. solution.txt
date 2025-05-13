@@ -1,0 +1,59 @@
+Understanding the problem first. 
+
+loop: LD R1,0(R2)      # Load value from the memory address in R2 into R1
+      DADDI R1,R1,1    # Increment the value in R1 by 1
+      SD 0(R2),R1      # Store the updated valaue from R1 back to address in R2
+      DADDI R2,R2,4    # Increment R2 by 4 (moving to next memory word)
+      DSUB R4,R3,R2    # R4 = R3-R2 (checking if we're done)
+      BNEZ R4,loop     # Branch to loop if R4 ≠ 0. (repeat the process if R2 != R3) 
+
+Assumptions: 
+    1. Five stage pipeline with: 
+      IF => Instruction Fetch.
+      ID => Instruction Decode and Register Read.
+      EX => Execute 
+      MEM => Memory access
+      WB => Write Back 
+    2. Normal forwarding and by passing hardware. 
+    3. Branch predicted as not taken. 
+    4. Branch resolved in ID stage.
+    5. Separate instruction and data memories.
+    6. All memory accesses take 1 cycle.
+
+Identify the hazards with forwarding 
+    With normal forwarding, result from MEM stage of LD can be forwarded to EX stage of DADDDi, 
+    but we still need 1 stall cycle.
+    Other hazards are eliminated by forwarding.
+
+Branch prediction consequences. 
+    1. Branch is predicted as not taken. 
+    2. When prediction is wrong, there's a need to flush the pipeline.
+    3. Misprediction is detected in ID stage. 
+    4. One instruction wil be wrongly fetched and must be flushed.
+
+We come up with a pipeline diagram for a single iteration.
+
+    Cycle:   1   2   3   4   5   6   7   8   9   10  11
+    LD       IF  ID  EX  ME  WB
+    DADDI        IF  ID  --  EX  ME  WB     // 1 stall fo load-use hazard 
+    SD               IF  ID  EX  ME  WB 
+    DADDI                IF  ID  EX  ME  WB 
+    DSUB                     IF  ID  EX  ME  WB
+    BNEZ                         IF  ID  EX  # Branc resolved hee, mispediction detected.
+    Wrong                            IF      # This instruction is flushed.
+    LD                                   IF  ID  EX  ME  WB  #  Next iteration starts.
+
+Calculating the cycles per iteration. 
+  First LD starts at cycle 1. 
+  Next LD starts at cycle 7. 
+  Each iteration takes 6 cycles, which is obtained from 7 - 1. 
+
+Calculating the total cycles. 
+  We got 396/4 => 99 elements. 
+  99 elements, each 6 cycles => 594 cycles. 
+  For the last iteration when branch is not taken, we complete all the 6 instructions, where each takes 1 cycle, 
+  and therefore we have 6 cycles here. 
+  Total cycles => 594 + 6 => 600 cycles.
+
+  
+
